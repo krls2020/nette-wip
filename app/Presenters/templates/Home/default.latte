@@ -1,0 +1,62 @@
+{block content}
+
+<pre>
+    composer create-project nette/web-project nettefw
+    cd nettefw
+
+    --------------------------------
+    ADD SUPPORT FOR .ENV FILES
+    --------------------------------
+    composer require vlucas/phpdotenv
+
+    update app/Bootstrap.php
+    Add follow lines before you add setup config files ($configurator->addConfig)
+    \Dotenv\Dotenv::createImmutable(__DIR__.'/../')->safeLoad();
+    $configurator->addDynamicParameters(['ENV' => $_SERVER]);
+
+    create .env and insert
+    DB_DNS=mysql:host=127.0.0.1;dbname=nettefw
+    DB_USERNAME=your-db-user
+    DB_PASSWORD=your-secret-password
+
+    add configuration to config/local.neon
+        database:
+            dsn: %ENV.DB_DNS%
+            user: %ENV.DB_USERNAME%
+            password: %ENV.DB_PASSWORD%
+
+    update .gitingore
+    - remove config/local neon
+    - add .env
+
+    Setup .env in Zerops
+    DB_NAME=nettefw
+    DB_DNS="mysql:host=$&#123;mariadb0_hostname};dbname=$&#123;DB_NAME}"
+    DB_USERNAME="$&#123;mariadb0_user}"
+    DB_PASSWORD="$&#123;mariadb0_password}"
+
+
+    --------------------------------
+    ALLOW ZEROPS REVERSE PROXY
+    --------------------------------
+    Add follow configuration to config/common.neon
+    http:
+        proxy:
+            - 10.0.0.0/24 # Zerops revers proxy IP range
+
+
+
+</pre>
+
+    <h1>Můj blog</h1>
+
+    {foreach $posts as $post}
+        <div class="post">
+            <div class="date">{$post->created_at|date:'F j, Y'}</div>
+
+            <h2><a href="{link Post:show $post->id}">{$post->title}</a></h2>
+
+            <div>{$post->content|truncate:256}</div>
+        </div>
+    {/foreach}
+{/block}

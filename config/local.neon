@@ -1,0 +1,7 @@
+parameters:
+
+
+database:
+	dsn: %ENV.DB_DNS%
+	user: %ENV.DB_USERNAME%
+	password: %ENV.DB_PASSWORD%
